@@ -16,7 +16,8 @@ class Model(nn.Module):
 
 
 if __name__ == '__main__':
-    model = Model(model_name='inception_v4')
-    rs = torch.randn(1, 3, 512, 512)
+    device = 'cpu'
+    model = Model(model_name='inception_v4').to(device)
+    rs = torch.randn(1, 3, 512, 512).to(device)
     o = model(rs)
     print(o)
