@@ -2,5 +2,5 @@ root_dir: 'D:/lycaoduong/workspace/datasets/cancer/images'
 train_dir : 'D:/lycaoduong/workspace/datasets/cancer/train.csv'
 val_dir : 'D:/lycaoduong/workspace/datasets/cancer/val.csv'
 test_dir : 'D:/lycaoduong/workspace/datasets/cancer/test.csv'
-cls_name: {0: "breast_cancer", 1: "breast_normal", 2: "thyroid_cancer", 3: "thyroid_normal", 4: "intracranial_hemorrhage", 5: "IH_normal"}
+cls_name: {0: "breast_cancer", 1: "breast_normal", 2: "thyroid_cancer", 3: "thyroid_normal", 4: "lung_cancer", 5: "lung_normal"}
 num_cls: 6

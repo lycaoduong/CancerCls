@@ -4,6 +4,8 @@ import torch
 
 
 class Normalizer(object):
+    def __init__(self) -> None:
+        pass
     def __call__(self, sample):
         image, label, fn = sample['image'], sample['label'], sample['fn']
         image = image / 255.0
