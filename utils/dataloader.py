@@ -15,20 +15,17 @@ class CancerDataset(Dataset):
         return len(self.dataframe)
 
     def __getitem__(self, idx):
-        image, label, fn = self.load_image(idx)
-        data_loader = {'image': image, 'label': label, 'fn': fn}
+        image, label = self.load_image(idx)
+        data_loader = {'image': image, 'label': label, 'fn': None}
         if self.transform is not None:
             data_loader = self.transform(data_loader)
         return data_loader
 
     def load_image(self, idx):
         fn = self.dataframe.get('fname')[idx]
-        scores = self.dataframe.get('class')[idx]
+        label = self.dataframe.get('class')[idx]
         img_dir = os.path.join(self.img_dir, fn)
         img = cv2.imread(img_dir)
         img = img[:, :, ::-1] #BGR2RGB
-        label = np.zeros(self.nc)
-        if scores != 0:
-            label[int(scores)] = 1.0
-        return img, label, fn
+        return img, np.array(label)
     

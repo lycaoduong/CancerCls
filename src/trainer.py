@@ -3,10 +3,8 @@ import os
 import json
 from utils.utils import YamlRead
 from utils import tranform as tr
-from torchvision import transforms
 from utils.dataloader import CancerDataset
 from torch.utils.data import DataLoader
-from network.model import Model
 from torch import nn
 import torch
 from tqdm.autonotebook import tqdm
@@ -14,6 +12,8 @@ import traceback
 import numpy as np
 import pandas as pd
 import timm
+from utils.utils import plot_data
+from torchvision import transforms
 
 
 class Trainer(object):
@@ -37,7 +37,7 @@ class Trainer(object):
 
         # Read dataset
         dataset_configs = YamlRead(f'configs/dataset/{self.dataset}.yaml')
-        self.root_dir = dataset_configs.roor_dir
+        self.root_dir = dataset_configs.root_dir
         self.train_dir = dataset_configs.train_dir
         self.val_dir = dataset_configs.val_dir
         self.cls_name = dataset_configs.cls_name
@@ -46,12 +46,16 @@ class Trainer(object):
         train_df = pd.read_csv(self.train_dir, encoding='utf-8')
         val_df = pd.read_csv(self.val_dir, encoding='utf-8')
 
+        self.batch_size = train_opt.batch_size
+        self.img_size = train_opt.imgsize
+
         train_transforms = [
-            tr.Normalizer(with_std=False),
-            tr.Resizer(signal_size=self.signal_size)
+            tr.Normalizer(),
+            tr.Resizer(img_size=self.img_size)
         ]
 
-        training_set = CancerDataset(root_dir=self.root_dir, df=train_df, transform=train_transforms)
+        training_set = CancerDataset(root_dir=self.root_dir, df=train_df, nc=self.num_cls,
+                                     transform=transforms.Compose(train_transforms))
 
         train_params = {
             'batch_size': self.batch_size,
@@ -63,11 +67,12 @@ class Trainer(object):
         self.training_generator = DataLoader(training_set, collate_fn=tr.collater, **train_params)
 
         validation_transforms = [
-            tr.Normalizer(with_std=False),
-            tr.Resizer(signal_size=self.signal_size)
+            tr.Normalizer(),
+            tr.Resizer(img_size=self.img_size)
         ]
 
-        val_set = CancerDataset(root_dir=self.root_dir, df=val_df, transform=validation_transforms)
+        val_set = CancerDataset(root_dir=self.root_dir, df=val_df, nc=self.num_cls,
+                                transform=transforms.Compose(validation_transforms))
 
         val_params = {
             'batch_size': self.batch_size,
@@ -119,6 +124,7 @@ class Trainer(object):
             try:
                 images, labels = data['image'], data['label']
                 images = images.to(self.device)
+                images = torch.permute(images, (0, 3, 1, 2))
                 labels = labels.to(self.device)
                 self.optimizer.zero_grad()
                 output = self.model(images)
@@ -158,6 +164,7 @@ class Trainer(object):
                 try:
                     images, labels = data['image'], data['label']
                     images = images.to(self.device)
+                    images = torch.permute(images, (0, 3, 1, 2))
                     labels = labels.to(self.device)
 
                     output = self.model(images)
@@ -193,3 +200,17 @@ class Trainer(object):
 
     def save_checkpoint(self, model, saved_path, name):
         torch.save(model.state_dict(), saved_path + name)
+
+    def data_analysis(self):
+        train_data_dis = np.zeros((1, self.num_cls))
+        val_data_dis = np.zeros((1, self.num_cls))
+        df = pd.read_csv(self.train_dir)
+        for cls in range(self.num_cls):
+            rslt_df = df[df['class'] == cls]
+            train_data_dis[:, cls] = len(rslt_df)
+        plot_data(data_dis=train_data_dis, cls_name=self.cls_name, save_dir=self.save_dir, save_name="train.png")
+        df = pd.read_csv(self.val_dir)
+        for cls in range(self.num_cls):
+            rslt_df = df[df['class'] == cls]
+            val_data_dis[:, cls] = len(rslt_df)
+        plot_data(data_dis=val_data_dis, cls_name=self.cls_name, save_dir=self.save_dir, save_name="val.png")

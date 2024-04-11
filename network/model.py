@@ -17,6 +17,8 @@ class Model(nn.Module):
 
 if __name__ == '__main__':
     device = 'cpu'
+    if torch.cuda.is_available():
+        device = 'cuda'
     model = Model(model_name='inception_v4').to(device)
     rs = torch.randn(1, 3, 512, 512).to(device)
     o = model(rs)
