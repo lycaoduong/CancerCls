@@ -21,9 +21,9 @@ python train.py --model inception_v4 --epochs 50
 Run python script eval.py with variable parser arguments:<br />
 Resnet101
 ```
-python eval.py --model resnet101 --ckpt best.pt
+python eval.py --model resnet101 --ckpt bestVal.pt
 ```
 InceptionNetV4
 ```
-python eval.py --model inception_v4 --ckpt best.pt
+python eval.py --model inception_v4 --ckpt last.pt
 ```
