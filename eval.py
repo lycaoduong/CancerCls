@@ -5,7 +5,7 @@ from src.eval import Evaluator
 def get_args():
     parser = argparse.ArgumentParser('Cancer Classification')
     parser.add_argument('-p', '--project', type=str, default='Cancer', help='Project Name')
-    parser.add_argument('-m', '--model', type=str, default='resnet34', help='Choosing Model, i.e resnet34, resnet101, inception_v4')
+    parser.add_argument('-m', '--model', type=str, default='resnet101', help='Choosing Model, i.e resnet34, resnet101, inception_v4')
     parser.add_argument('-w', '--ckpt', type=str, default='last.pt', help='Loading pretrained weighted *.pt file')
     parser.add_argument('-d', '--dataset', type=str, default='cancer', help='Loading dataset configs file')
     parser.add_argument('-is', '--imgsize', type=int, default=512, help='Image size')
@@ -18,5 +18,5 @@ def get_args():
 
 if __name__ == '__main__':
     opt = get_args()
-    trainer = Evaluator(opt)
-    trainer.start()
+    evaler = Evaluator(opt)
+    evaler.start()
