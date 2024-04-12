@@ -17,7 +17,7 @@ InceptionNetV4
 ```
 python train.py --model inception_v4 --epochs 50
 ```
-## For Evalation
+## For Evaluation
 Run python script eval.py with variable parser arguments:<br />
 Resnet101
 ```
