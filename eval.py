@@ -19,5 +19,4 @@ def get_args():
 if __name__ == '__main__':
     opt = get_args()
     trainer = Evaluator(opt)
-    trainer.data_analysis()
     trainer.start()
