@@ -11,7 +11,7 @@ class Model(nn.Module):
     def forward(self, image):
         x = self.model(image)
         # Comment it if Loss Function has activation function
-        # x = torch.softmax(x, dim=1)
+        x = torch.softmax(x, dim=1)
         return x
 
 

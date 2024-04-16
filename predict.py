@@ -4,12 +4,13 @@ from src.predictor import Predictor
 import torch
 
 
-model = 'resnet101'
+model = 'efficientnet_b4'
 ckpt = 'bestVal.pt'
 device = 'cpu'
 if torch.cuda.is_available():
     device = 'cuda'
 engine = Predictor(model=model, ckpt=ckpt, device=device)
+# engine = PredictorONNX(onnx_dir=ckpt, device=device)
 
 def predict_img(img_dir):
     engine.predict(img_dir)
